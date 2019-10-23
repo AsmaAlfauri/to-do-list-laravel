@@ -14,6 +14,14 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+// Auth the login
+Auth::routes();
+Route::get('/home', 'HomeController@index')->name('home');
+Auth::routes();
+Route::get('/home', 'HomeController@index')->name('home');
+//Route::resource('todos'.'TodosController');
+
 //show the data
 Route::get('todos','TodosController@index');
 Route::get('todos/{todo}','TodosController@show');
@@ -28,3 +36,7 @@ Route::post('todos/{todo}/update-todos','TodosController@update');
 
 //delete data
 Route::get('todos/{todo}/delete','TodosController@destroy');
+
+
+
+

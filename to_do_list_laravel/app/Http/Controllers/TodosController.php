@@ -4,13 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Todo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TodosController extends Controller
 {
     //show the data
     public function index()
     {
-        $todos = Todo::all();
+        $user_id=Auth::id();
+        $todos = Todo::where('user_id',$user_id)->get();
+//        $user=User::findOrFail($user_id);
+//        $todo=$user->tasks()->get();
         return view('todos.index')->with('todos', $todos);
     }
 
@@ -29,16 +33,20 @@ return view('todos.create');
 
     public function store()
     {
+        //validation form
         $this->validate(request(),[
             'name'=>'required|min:6|max:12',
-            'description'=>'required'
+            'description'=>'required',
         ]);
 
+        //get data from the req.
+        $user_id=Auth::id();
         $data = request()->all();
         $todo = new Todo();
         $todo->name = $data['name'];
         $todo->description = $data['description'];
         $todo->completed = false;
+        $todo->user_id=$user_id;
         $todo->save();
         return redirect('/todos');
     }
@@ -47,12 +55,12 @@ return view('todos.create');
 
     /////////////////////////////////////////////////////////////////
     //edit data
-    public function edit($todoId){
+    public function edit($todoId, $id){
         $todo=Todo::find($todoId);
         return view('todos.edit')->with('todo',$todo);
     }
 
-    public function update ($todoId){
+    public function update ($todoId, $id){
 
         $this->validate(request(),[
             'name'=>'required|min:6|max:12',
